@@ -15,9 +15,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $madelinePath = base_path() . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'madeline.php';
 
-        if (!file_exists('madeline.php')) {
+        if (!file_exists($madelinePath)) {
             copy('https://phar.madelineproto.xyz/madeline.php', $madelinePath);
         }
+
         define('MADELINE_BRANCH', '');
         require_once $madelinePath;
     }

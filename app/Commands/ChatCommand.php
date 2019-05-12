@@ -2,6 +2,10 @@
 
 namespace App\Commands;
 
+use App\Events\DialogsHandler;
+use App\Events\UpdateHandler;
+use App\Events\UserHandler;
+use danog\MadelineProto\API;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 
@@ -21,11 +25,7 @@ class ChatCommand extends Command
      */
     protected $description = 'Start the chat';
 
-    protected $myText = null;
-
     protected $MadelineProto = null;
-
-    protected $lastUpdate = null;
 
     /**
      * Execute the console command.
@@ -34,13 +34,24 @@ class ChatCommand extends Command
      */
     public function handle()
     {
-        $this->MadelineProto = new \danog\MadelineProto\API(config('telegram.sessions.path'), config('telegram', []));
-
+        $this->MadelineProto = new API(config('telegram.sessions.path'), config('telegram', []));
         $this->MadelineProto->start();
 
-        $me = $this->MadelineProto->get_self();
+        echo "\nSuccessfully booted Telegram.\n\n";
 
-        var_dump($me);
+        // get current logged in user
+        $userHandler = new UserHandler($this->MadelineProto);
+        $userHandler->showUserName();
+
+        // show selection for chat
+        $dialogHandler = new DialogsHandler($this->MadelineProto);
+        $dialogHandler->getDialogs();
+
+        // check for new messages
+        $updateHandler = new UpdateHandler($this->MadelineProto);
+        while (true) {
+            $updateHandler->handleUpdates();
+        }
     }
 
 
