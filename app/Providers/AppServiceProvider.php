@@ -18,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         if (!file_exists('madeline.php')) {
             copy('https://phar.madelineproto.xyz/madeline.php', $madelinePath);
         }
+        define('MADELINE_BRANCH', '');
         require_once $madelinePath;
     }
 

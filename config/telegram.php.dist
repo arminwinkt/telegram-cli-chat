@@ -1,0 +1,15 @@
+<?php
+
+return [
+    'app_info' => [
+        'api_id' => '',
+        'api_hash' => '',
+        'app_version' => app('git.version'),
+    ],
+    'logger' => [
+        'logger' => 0, // 0, 1, 2 or 3
+    ],
+    'sessions' => [
+        'path' => base_path('var' . DIRECTORY_SEPARATOR . 'sessions' . DIRECTORY_SEPARATOR . 'session.madeline'),
+    ],
+];
