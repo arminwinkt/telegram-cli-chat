@@ -41,11 +41,23 @@ class ChatCommand extends Command
 
         // get current logged in user
         $userHandler = new UserHandler($this->MadelineProto);
-        $userHandler->showUserName();
+
 
         // show selection for chat
         $dialogHandler = new DialogsHandler($this->MadelineProto);
-        $dialogHandler->getDialogs();
+        $dialogHandler->getDialogsMenuOptions();
+        $currentChat = $this->menu('Choose a chat', $dialogHandler->getDialogsMenuOptions())->open();
+        if (empty($currentChat)) {
+            $this->info("Shutting down chat... :(");
+            die();
+        }
+
+
+        // show logged in user and selected chat
+        $userHandler->showUserName();
+        $this->info("You selected the chat with the id: #$currentChat");
+        echo "\n";
+
 
         // check for new messages
         $updateHandler = new UpdateHandler($this->MadelineProto);

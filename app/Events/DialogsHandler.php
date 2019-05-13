@@ -21,6 +21,9 @@ class DialogsHandler
         $this->MadelineProto = $MadelineProto;
     }
 
+    /**
+     * @return array|bool
+     */
     public function getDialogs()
     {
         if (!empty($this->dialogs)) {
@@ -52,7 +55,21 @@ class DialogsHandler
             ];
         }
 
-        var_dump($this->dialogs);
+        return $this->dialogs;
+    }
 
+    /**
+     * @return array
+     */
+    public function getDialogsMenuOptions()
+    {
+        $dialogs = $this->getDialogs();
+        $menu = [];
+
+        foreach ($dialogs as $dialog) {
+            $menu[$dialog['id']] = $dialog['name'] . " ({$dialog['phone']})";
+        }
+
+        return $menu;
     }
 }
