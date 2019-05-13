@@ -4,6 +4,7 @@ namespace App\Commands;
 
 use App\Events\DialogsHandler;
 use App\Events\HistoryHandler;
+use App\Events\InputHandler;
 use App\Events\UpdateHandler;
 use App\Events\UserHandler;
 use danog\MadelineProto\API;
@@ -66,8 +67,10 @@ class ChatCommand extends Command
 
         // check for new messages
         $updateHandler = new UpdateHandler($this->MadelineProto, $currentChat);
+        $inputHandler = new InputHandler($this->MadelineProto, $currentChat);
         while (true) {
             $updateHandler->handleUpdates();
+            $inputHandler->handleInput();
         }
     }
 
