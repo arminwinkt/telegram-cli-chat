@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Events\DialogsHandler;
+use App\Events\HistoryHandler;
 use App\Events\UpdateHandler;
 use App\Events\UserHandler;
 use danog\MadelineProto\API;
@@ -40,8 +41,7 @@ class ChatCommand extends Command
         echo "\nSuccessfully booted Telegram.\n\n";
 
         // get current logged in user
-        $userHandler = new UserHandler($this->MadelineProto);
-
+        $userHandler = UserHandler::getInstance($this->MadelineProto);
 
         // show selection for chat
         $dialogHandler = new DialogsHandler($this->MadelineProto);
@@ -59,8 +59,13 @@ class ChatCommand extends Command
         echo "\n";
 
 
+        // show chat history
+        $historyHandler = new HistoryHandler($this->MadelineProto, $currentChat);
+        $historyHandler->showHistory();
+
+
         // check for new messages
-        $updateHandler = new UpdateHandler($this->MadelineProto);
+        $updateHandler = new UpdateHandler($this->MadelineProto, $currentChat);
         while (true) {
             $updateHandler->handleUpdates();
         }

@@ -7,6 +7,11 @@ use danog\MadelineProto\API;
 class UserHandler
 {
     /**
+     * @var UserHandler
+     */
+    protected static $_instance = null;
+
+    /**
      * @var API
      */
     protected $MadelineProto;
@@ -16,11 +21,21 @@ class UserHandler
      */
     protected $user;
 
-    public function __construct($MadelineProto)
+    public static function getInstance($MadelineProto)
+    {
+        if (null === self::$_instance) {
+            self::$_instance = new self($MadelineProto);
+        }
+        return self::$_instance;
+    }
+
+    protected function __construct($MadelineProto)
     {
         $this->MadelineProto = $MadelineProto;
         $this->getUser();
     }
+
+    protected function __clone() {}
 
     public function getUser()
     {

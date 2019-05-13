@@ -2,15 +2,35 @@
 
 namespace App\Events;
 
+use danog\MadelineProto\API;
+
 class UpdateHandler
 {
+    /**
+     * @var API
+     */
     protected $MadelineProto;
 
+    /**
+     * @var int
+     */
     protected $lastUpdateId = 0;
 
-    public function __construct($MadelineProto)
+    /**
+     * @var int
+     */
+    protected $chatId;
+
+    /**
+     * @var string
+     */
+    protected $chatName;
+
+    public function __construct($MadelineProto, $chatId)
     {
         $this->MadelineProto = $MadelineProto;
+        $this->chatId = $chatId;
+        $this->chatName = $this->getUserNameById($this->chatId);
     }
 
     public function handleUpdates()
@@ -48,9 +68,12 @@ class UpdateHandler
 
     protected function handleNewMessage($update)
     {
-        $user = $this->getUserNameById($update['update']['message']['from_id']);
+        if ($update['update']['message']['from_id'] !== $this->chatId) {
+            return;
+        }
 
-        echo $user . " > " . $update['update']['message']['message'] . "\n";
+        echo "\e[1;37;44m{$this->chatName}\e[0m";
+        echo " > " . $update['update']['message']['message'] . "\n";
     }
 
 }
