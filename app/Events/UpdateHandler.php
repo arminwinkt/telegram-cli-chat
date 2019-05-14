@@ -27,14 +27,11 @@ class UpdateHandler
      */
     protected $chatName;
 
-    protected $nameSpacing = 7;
-
-    public function __construct($MadelineProto, $chatId)
+    public function __construct($chatId)
     {
-        $this->MadelineProto = $MadelineProto;
+        $this->MadelineProto = MadelineProtoHandler::getInstance()->getMadelineProto();
         $this->chatId = $chatId;
         $this->chatName = $this->getUserNameById($this->chatId);
-        $this->nameSpacing = strlen($this->chatName) > $this->nameSpacing ? strlen($this->chatName) : $this->nameSpacing;
     }
 
     public function handleUpdates()
@@ -81,7 +78,9 @@ class UpdateHandler
             return;
         }
 
-        printf("%-{$this->nameSpacing}s", $this->chatName);
+        $spacing = UserHandler::getInstance()->getChatDetailLength();
+
+        printf("%-{$spacing}s", $this->chatName);
 
         echo " > " . $update['update']['message']['message'] . "\n";
     }

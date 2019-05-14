@@ -16,9 +16,9 @@ class DialogsHandler
      */
     protected $dialogs = [];
 
-    public function __construct($MadelineProto)
+    public function __construct()
     {
-        $this->MadelineProto = $MadelineProto;
+        $this->MadelineProto = MadelineProtoHandler::getInstance()->getMadelineProto();
     }
 
     /**

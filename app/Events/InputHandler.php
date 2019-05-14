@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use Amp\Loop;
 use danog\MadelineProto\API;
 
 class InputHandler
@@ -17,14 +16,18 @@ class InputHandler
      */
     protected $chatId;
 
-    public function __construct($MadelineProto, $chatId)
+    public function __construct($chatId)
     {
-        $this->MadelineProto = $MadelineProto;
+        $this->MadelineProto = MadelineProtoHandler::getInstance()->getMadelineProto();
         $this->chatId = $chatId;
     }
 
     public function handleInput($line)
     {
+        if (empty(trim($line))) {
+            return;
+        }
+
         $this->MadelineProto->messages->sendMessage(['peer' => $this->chatId, 'message' => $line]);
     }
 }

@@ -21,17 +21,17 @@ class UserHandler
      */
     protected $user;
 
-    public static function getInstance($MadelineProto)
+    public static function getInstance()
     {
         if (null === self::$_instance) {
-            self::$_instance = new self($MadelineProto);
+            self::$_instance = new self();
         }
         return self::$_instance;
     }
 
-    protected function __construct($MadelineProto)
+    protected function __construct()
     {
-        $this->MadelineProto = $MadelineProto;
+        $this->MadelineProto = MadelineProtoHandler::getInstance()->getMadelineProto();
         $this->getUser();
     }
 
@@ -51,7 +51,7 @@ class UserHandler
 
     public function showUserName()
     {
-        $username = $this->getUser()['first_name'] . (!empty($this->getUser()['last_name']) ? " " . $this->getUser()['last_name'] : '');
+        $username = $this->getUserName();
         echo "\e[0;31;42mLogged in as: $username \e[0m\n\n";
     }
 

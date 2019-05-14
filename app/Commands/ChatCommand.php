@@ -5,9 +5,9 @@ namespace App\Commands;
 use App\Events\DialogsHandler;
 use App\Events\HistoryHandler;
 use App\Events\InputHandler;
+use App\Events\MadelineProtoHandler;
 use App\Events\UpdateHandler;
 use App\Events\UserHandler;
-use danog\MadelineProto\API;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 use Clue\React\Stdio\Stdio;
@@ -29,8 +29,6 @@ class ChatCommand extends Command
      */
     protected $description = 'Start the chat';
 
-    protected $MadelineProto = null;
-
     /**
      * Execute the console command.
      *
@@ -48,16 +46,15 @@ class ChatCommand extends Command
             return '';
         }, 1);
 
-        $this->MadelineProto = new API(config('telegram.sessions.path'), config('telegram', []));
-        $this->MadelineProto->start();
+        MadelineProtoHandler::getInstance();
 
         echo "\nSuccessfully booted Telegram.\n\n";
 
         // get current logged in user
-        $userHandler = UserHandler::getInstance($this->MadelineProto);
+        $userHandler = UserHandler::getInstance();
 
         // show selection for chat
-        $dialogHandler = new DialogsHandler($this->MadelineProto);
+        $dialogHandler = new DialogsHandler();
         $dialogHandler->getDialogsMenuOptions();
         $currentChat = $this->menu('Choose a chat', $dialogHandler->getDialogsMenuOptions())->open();
         if (empty($currentChat)) {
@@ -77,13 +74,13 @@ class ChatCommand extends Command
 
 
         // show chat history
-        $historyHandler = new HistoryHandler($this->MadelineProto, $currentChat);
+        $historyHandler = new HistoryHandler($currentChat);
         $historyHandler->showHistory();
 
 
         // check for new messages
-        $updateHandler = new UpdateHandler($this->MadelineProto, $currentChat);
-        $inputHandler = new InputHandler($this->MadelineProto, $currentChat);
+        $updateHandler = new UpdateHandler($currentChat);
+        $inputHandler = new InputHandler($currentChat);
 
         $timer = $loop->addPeriodicTimer(1, [$updateHandler, 'handleUpdates']);
         $stdio->on('data', [$inputHandler, 'handleInput']);
