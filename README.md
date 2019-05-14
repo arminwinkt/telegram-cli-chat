@@ -11,7 +11,7 @@
 
 - PHP 7.1+
 - The application is tested on **Linux** (Ubuntu 19.04) and **Mac OS** (High Sierra)
-- It should run also on Windows but was not tested yet
+- It should also run on Windows - but it was not tested yet
 
 ## Installation
 
