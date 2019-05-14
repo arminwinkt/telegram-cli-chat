@@ -51,7 +51,7 @@ class UserHandler
 
     public function showUserName()
     {
-        $username = $this->getUser()['first_name'] . " " . $this->getUser()['last_name'];
+        $username = $this->getUser()['first_name'] . (!empty($this->getUser()['last_name']) ? " " . $this->getUser()['last_name'] : '');
         echo "\e[0;31;42mLogged in as: $username \e[0m\n\n";
     }
 
