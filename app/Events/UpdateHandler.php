@@ -2,8 +2,8 @@
 
 namespace App\Events;
 
+use App\Commands\ChatCommand;
 use danog\MadelineProto\API;
-use Mockery\Exception;
 
 class UpdateHandler
 {
@@ -27,11 +27,17 @@ class UpdateHandler
      */
     protected $chatName;
 
-    public function __construct($chatId)
+    /**
+     * @var ChatCommand
+     */
+    protected $notificationHandler = null;
+
+    public function __construct($chatId, $notificationHandler = null)
     {
         $this->MadelineProto = MadelineProtoHandler::getInstance()->getMadelineProto();
         $this->chatId = $chatId;
         $this->chatName = $this->getUserNameById($this->chatId);
+        $this->notificationHandler = $notificationHandler;
     }
 
     public function handleUpdates()
@@ -78,11 +84,17 @@ class UpdateHandler
             return;
         }
 
+        $message = $update['update']['message']['message'];
+
         $spacing = UserHandler::getInstance()->getChatDetailLength();
 
         printf("%-{$spacing}s", $this->chatName);
 
-        echo " > " . $update['update']['message']['message'] . "\n";
+        echo " > " . $message . "\n";
+
+        if (!empty($this->notificationHandler)) {
+            $this->notificationHandler->notify("CLI Chat: " . $this->chatName, $message, resource_path('logo.png'));
+        }
     }
 
 }

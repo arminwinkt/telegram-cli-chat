@@ -65,6 +65,7 @@ class ChatCommand extends Command
 
         // show logged in user and selected chat
         $userHandler->showUserName();
+        $this->notify("Telegram CLI Chat", "Chat with id #$currentChat is now running.", resource_path('logo.png'));
         $this->info("You selected the chat with the id: #$currentChat");
         echo PHP_EOL;
 
@@ -79,7 +80,7 @@ class ChatCommand extends Command
 
 
         // check for new messages
-        $updateHandler = new UpdateHandler($currentChat);
+        $updateHandler = new UpdateHandler($currentChat, $this);
         $inputHandler = new InputHandler($currentChat);
 
         $timer = $loop->addPeriodicTimer(1, [$updateHandler, 'handleUpdates']);
