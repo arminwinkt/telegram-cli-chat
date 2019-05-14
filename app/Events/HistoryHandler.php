@@ -17,6 +17,11 @@ class HistoryHandler
     protected $chatId;
 
     /**
+     * @var string
+     */
+    protected $userName;
+
+    /**
      * @var array
      */
     protected $history = [];
@@ -25,6 +30,26 @@ class HistoryHandler
     {
         $this->MadelineProto = $MadelineProto;
         $this->chatId = $chatId;
+        $this->userName = $this->getUserNameById($chatId);
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    protected function getUserNameById($id)
+    {
+        if (empty($id)) {
+            return '';
+        }
+
+        $users = $this->MadelineProto->users->getUsers(['id' => [$id]]);
+
+        if (empty($users) || empty($users[0])) {
+            return $id;
+        }
+
+        return $users[0]['first_name'] . (!empty($users[0]['last_name']) ? " " . $users[0]['last_name'] : '');
     }
 
     /**
@@ -77,10 +102,10 @@ class HistoryHandler
         $currentUserId = UserHandler::getInstance($this->MadelineProto)->getUser()['id'];
 
         foreach ($history as $message) {
-            if($message['from'] === $currentUserId) {
+            if ($message['from'] === $currentUserId) {
                 echo "\e[1;37;41mYou\e[0m";
             } else {
-                echo "\e[1;37;44mOther\e[0m";
+                echo "\e[1;37;44m{$this->userName}\e[0m";
             }
 
             echo " > ";
