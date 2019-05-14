@@ -3,8 +3,8 @@
 **A telegram client for the CLI based on PHP.**
 
 
-![Choose a chat](ressources/screenshots/screenshot-1.png?raw=true)
-![Chatting](ressources/screenshots/screenshot-2.png?raw=true)
+![Choose a chat](resources/screenshots/screenshot-1.png?raw=true)
+![Chatting](resources/screenshots/screenshot-2.png?raw=true)
 
 
 ## Requirements
