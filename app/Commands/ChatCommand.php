@@ -36,10 +36,12 @@ class ChatCommand extends Command
      */
     public function handle()
     {
+        echo "\nBooting up Telegram. Hold on...\n\n";
+
         $this->MadelineProto = new API(config('telegram.sessions.path'), config('telegram', []));
         $this->MadelineProto->start();
 
-        echo "\nSuccessfully booted Telegram.\n\n";
+        echo "\nSuccessfully booted Telegram.\n";
 
         // get current logged in user
         $userHandler = UserHandler::getInstance($this->MadelineProto);
