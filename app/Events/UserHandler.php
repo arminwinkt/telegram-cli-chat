@@ -35,7 +35,9 @@ class UserHandler
         $this->getUser();
     }
 
-    protected function __clone() {}
+    protected function __clone()
+    {
+    }
 
     public function getUser()
     {
@@ -51,5 +53,15 @@ class UserHandler
     {
         $username = $this->getUser()['first_name'] . " " . $this->getUser()['last_name'];
         echo "\e[0;31;42mLogged in as: $username \e[0m\n\n";
+    }
+
+    public function getUserName()
+    {
+        return $this->getUser()['first_name'] . (!empty($this->getUser()['last_name']) ? $this->getUser()['last_name'] : '');
+    }
+
+    public function getChatDetailLength()
+    {
+        return strlen($this->getUserName());
     }
 }

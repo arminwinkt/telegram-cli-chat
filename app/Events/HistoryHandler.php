@@ -26,11 +26,14 @@ class HistoryHandler
      */
     protected $history = [];
 
+    protected $nameSpacing = 7;
+
     public function __construct($MadelineProto, $chatId)
     {
         $this->MadelineProto = $MadelineProto;
         $this->chatId = $chatId;
         $this->userName = $this->getUserNameById($chatId);
+        $this->nameSpacing = strlen($this->userName) > $this->nameSpacing ? strlen($this->userName) : $this->nameSpacing;
     }
 
     /**
@@ -66,7 +69,7 @@ class HistoryHandler
             'offset_id' => 0,
             'offset_date' => 0,
             'add_offset' => 0,
-            'limit' => 20,
+            'limit' => 30,
             'max_id' => 0,
             'min_id' => 0,
         ]);
@@ -102,14 +105,15 @@ class HistoryHandler
         $currentUserId = UserHandler::getInstance($this->MadelineProto)->getUser()['id'];
 
         foreach ($history as $message) {
+            $messageString = '';
             if ($message['from'] === $currentUserId) {
-                echo "\e[1;37;41mYou\e[0m";
+                $messageString .= "You";
             } else {
-                echo "\e[1;37;44m{$this->userName}\e[0m";
+                $messageString .= $this->userName;
             }
 
-            echo " > ";
-            echo $message['message'] . "\n";
+            printf("%-{$this->nameSpacing}s", $messageString);
+            echo " > " . $message['message'] . "\n";
         }
 
     }

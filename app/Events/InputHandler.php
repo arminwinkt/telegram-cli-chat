@@ -23,10 +23,8 @@ class InputHandler
         $this->chatId = $chatId;
     }
 
-    public function handleInput()
+    public function handleInput($line)
     {
-        $line = readline("Command: ");
-
-        var_dump($line);
+        $this->MadelineProto->messages->sendMessage(['peer' => $this->chatId, 'message' => $line]);
     }
 }

@@ -10,6 +10,8 @@ use App\Events\UserHandler;
 use danog\MadelineProto\API;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
+use Clue\React\Stdio\Stdio;
+use React\EventLoop\Factory;
 
 class ChatCommand extends Command
 {
@@ -36,12 +38,20 @@ class ChatCommand extends Command
      */
     public function handle()
     {
-        echo "\nBooting up Telegram. Hold on...\n\n";
+        $loop = Factory::create();
+        $stdio = new Stdio($loop);
+
+        echo "\nBooting up Telegram. Hold on...";
+
+        ob_start(function ($chunk) use ($stdio) {
+            $stdio->write($chunk);
+            return '';
+        }, 1);
 
         $this->MadelineProto = new API(config('telegram.sessions.path'), config('telegram', []));
         $this->MadelineProto->start();
 
-        echo "\nSuccessfully booted Telegram.\n";
+        echo "\nSuccessfully booted Telegram.\n\n";
 
         // get current logged in user
         $userHandler = UserHandler::getInstance($this->MadelineProto);
@@ -59,7 +69,11 @@ class ChatCommand extends Command
         // show logged in user and selected chat
         $userHandler->showUserName();
         $this->info("You selected the chat with the id: #$currentChat");
-        echo "\n";
+        echo PHP_EOL;
+
+
+        // show input prompt
+        $stdio->getReadline()->setPrompt(sprintf("%-{$userHandler->getChatDetailLength()}s", "You") . " > ");
 
 
         // show chat history
@@ -70,12 +84,16 @@ class ChatCommand extends Command
         // check for new messages
         $updateHandler = new UpdateHandler($this->MadelineProto, $currentChat);
         $inputHandler = new InputHandler($this->MadelineProto, $currentChat);
-        while (true) {
-            $updateHandler->handleUpdates();
-            $inputHandler->handleInput();
-        }
-    }
 
+        $timer = $loop->addPeriodicTimer(1, [$updateHandler, 'handleUpdates']);
+        $stdio->on('data', [$inputHandler, 'handleInput']);
+
+        if (!$stdio->isReadable()) {
+            $loop->cancelTimer($timer);
+            $stdio->end();
+        }
+        $loop->run();
+    }
 
     /**
      * Define the command's schedule.

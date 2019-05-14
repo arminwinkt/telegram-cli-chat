@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use danog\MadelineProto\API;
+use Mockery\Exception;
 
 class UpdateHandler
 {
@@ -26,11 +27,14 @@ class UpdateHandler
      */
     protected $chatName;
 
+    protected $nameSpacing = 7;
+
     public function __construct($MadelineProto, $chatId)
     {
         $this->MadelineProto = $MadelineProto;
         $this->chatId = $chatId;
         $this->chatName = $this->getUserNameById($this->chatId);
+        $this->nameSpacing = strlen($this->chatName) > $this->nameSpacing ? strlen($this->chatName) : $this->nameSpacing;
     }
 
     public function handleUpdates()
@@ -40,15 +44,20 @@ class UpdateHandler
         if (empty($updates)) {
             return;
         }
-
         foreach ($updates as $update) {
-            $this->lastUpdateId = $update['update_id'] + 1;
+            if ($update['update_id'] === $this->lastUpdateId) {
+                continue;
+            }
+
+            $this->lastUpdateId = $update['update_id'];
 
             switch ($update['update']['_']) {
                 case 'updateNewMessage':
                     $this->handleNewMessage($update);
             }
         }
+
+        return;
     }
 
     protected function getUserNameById($id)
@@ -72,7 +81,8 @@ class UpdateHandler
             return;
         }
 
-        echo "\e[1;37;44m{$this->chatName}\e[0m";
+        printf("%-{$this->nameSpacing}s", $this->chatName);
+
         echo " > " . $update['update']['message']['message'] . "\n";
     }
 
