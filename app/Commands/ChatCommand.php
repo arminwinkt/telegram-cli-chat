@@ -36,6 +36,9 @@ class ChatCommand extends Command
      */
     public function handle()
     {
+        MadelineProtoHandler::getInstance();
+        echo "\nSuccessfully booted Telegram.\n\n";
+
         $loop = Factory::create();
         $stdio = new Stdio($loop);
 
@@ -45,10 +48,6 @@ class ChatCommand extends Command
             $stdio->write($chunk);
             return '';
         }, 1);
-
-        MadelineProtoHandler::getInstance();
-
-        echo "\nSuccessfully booted Telegram.\n\n";
 
         // get current logged in user
         $userHandler = UserHandler::getInstance();
