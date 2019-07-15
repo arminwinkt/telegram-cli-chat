@@ -36,7 +36,7 @@ $ cp config/telegram.php.dist config/telegram.php
 
 4: Run the chat
 ```bash
-$ php telegram-cli-chat chat
+$ php telegram-cli-chat
 ``` 
 
 
